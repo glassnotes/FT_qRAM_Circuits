@@ -38,7 +38,7 @@ class Circuit():
         self.params["t_depth"] = t_depth
         self.params["h_count"] = h_count
         self.params["cnot_count"] = cnot_count
-        self.params["cliffords"] = h_count + cnot_count # h_count + cnot_count
+        self.params["cliffords"] = h_count + cnot_count
         self.params["depth"] = depth
 
 class qRAMCircuit(Circuit):

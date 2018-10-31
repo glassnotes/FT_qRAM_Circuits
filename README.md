@@ -17,7 +17,7 @@ To run the analysis notebooks:
 
 ## Usage
 
-Within each class are formulae for the computation of relevant resources such as number of logical qubits, T-gates, Clifford gates, etc. All circuits inherit from a parent class Circuit, found in `src/circuit.py`.
+Within each class are formulae for the computation of relevant resources such as number of logical qubits, T-gates, Clifford gates, etc. All circuits inherit from a parent class `qRAMCircuit`, found in `src/circuit.py`.
 
 The file `src/surface_code.py` contains a surface code class that eats circuits and produces the resource estimates. Currently only defect-based estimates are implemented, with lattice surgery methods to be implemented at some point in the future. 
 

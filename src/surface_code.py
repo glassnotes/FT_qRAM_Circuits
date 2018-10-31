@@ -16,7 +16,6 @@ class SurfaceCode():
             :param float p_in: Input failure probability of magic states
             :param float p_g: Default failure probability of a gate
             :param float t_sc: Time for a surface code cycle.
-
         """
         self.params = { 
                     "p_in" : p_in, 
@@ -166,7 +165,7 @@ class SurfaceCode():
 
     def lattice_compute_resources(self, circuit, num_factories=1, safety_factor=99, d1=15, d2=23):
         return NotImplemented
-        
+
 
     def out(self):
         """ Somewhat pretty output of relevant surface code parameters.
