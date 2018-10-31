@@ -41,7 +41,7 @@ with open("double_hybrid_bucket_basic_circuits.csv", 'w') as csvfile:
             writer.writerow(sc.defect_compute_resources(LargeWidthSmallDepth(n, q)))
             writer.writerow(sc.defect_compute_resources(SmallWidthLargeDepth(n, q)))
 
-            # MPMCT stuff only works for 4 controls or higher
+            # Hybrid circuits; MPMCT stuff only works for 4 controls or higher
             for k in range(4, n - 3): 
                 if k >= q:
                     continue
@@ -51,7 +51,7 @@ with open("double_hybrid_bucket_basic_circuits.csv", 'w') as csvfile:
                 writer.writerow(sc.defect_compute_resources(Hybrid_Tier2Parallel(n, q, k)))
                 writer.writerow(sc.defect_compute_resources(Hybrid_Parallel(n, q, k)))
                 
-                # Choose b1, b2 for hybrid parallel
+                # Cartesian product address space
                 for b1 in range(0, int(q/2) + 5): 
                     b2 = q - b1
 
