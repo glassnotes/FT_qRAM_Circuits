@@ -4,7 +4,7 @@ This package contains Python classes for each type of circuit (and various paral
 *  Bucket brigade circuits (`src/bucket_brigade_circuits.py`)
 *  Basic circuits (`src/basic_circuits.py`)
 *  Hybrid circuits (`src/hybrid_circuits.py`)
-*  Double QRAM circuits (`src/double_qram_circuits.py`) 
+*  Double qRAM circuits (`src/double_qram_circuits.py`) 
 
 ## Requirements
 
