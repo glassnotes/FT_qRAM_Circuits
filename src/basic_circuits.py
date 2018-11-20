@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-                                                            
-#                                                                                  
-# basic_circuits.py: Large depth/width qRAM circuits. 
-#                                                                                  
-# © 2018 Olivia Di Matteo (odimatte@uwaterloo.ca)                                  
-#                                                                                  
-# This file is part of the project FT_qRAM_Circuits.                                      
-# Licensed under MIT License. 
-
 from circuit import *
 
 class LargeWidthSmallDepth(qRAMCircuit):
@@ -18,11 +9,11 @@ class LargeWidthSmallDepth(qRAMCircuit):
         self.params["name"] = "LargeWidthSmallDepth"
 
         self.params["n_qubits"] = n*pow(2,q+1) + 1
-        self.params["depth"] = 2*(2*q + depth(n)) + 1
-        self.params["t_count"] = 2*pow(2,q)*t_c(n)
-        self.params["t_depth"] = 2*t_d(n)
-        self.params["h_count"] = 2*pow(2,q)*h_c(n)
-        self.params["cnot_count"] = 2*(pow(2,q)*cnot_c(n) + (pow(2,q)-1)*(n+1)) + 1
+        self.params["depth"] = q + depth(n) + q + 2 + q 
+        self.params["t_count"] = pow(2,q)*t_c(n)
+        self.params["t_depth"] = t_d(n)
+        self.params["h_count"] = pow(2,q)*h_c(n)
+        self.params["cnot_count"] = 2*(n+1)*(pow(2,q)-1) + pow(2,q)*cnot_c(n) + 2 
         self.params["cliffords"] = self.params["h_count"] + self.params["cnot_count"]
 
 
@@ -33,10 +24,10 @@ class SmallWidthLargeDepth(qRAMCircuit):
         
         self.params["name"] = "SmallWidthLargeDepth"
 
-        self.params["n_qubits"] = 2*n + 1
-        self.params["depth"] = 2*pow(2,q)*depth(n) + 1
-        self.params["t_count"] = 2*pow(2,q)*t_c(n)
-        self.params["t_depth"] = 2*pow(2,q)*t_d(n)
-        self.params["h_count"] = 2*pow(2,q)*h_c(n)
-        self.params["cnot_count"] = 2*pow(2,q)*cnot_c(n) + 1
+        self.params["n_qubits"] = 2*n 
+        self.params["depth"] = pow(2,q)*depth(n) 
+        self.params["t_count"] = pow(2,q)*t_c(n)
+        self.params["t_depth"] = pow(2,q)*t_d(n)
+        self.params["h_count"] = pow(2,q)*h_c(n)
+        self.params["cnot_count"] = pow(2,q)*cnot_c(n) 
         self.params["cliffords"] = self.params["h_count"] + self.params["cnot_count"]
