@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-                                                            
+#                                                                                  
+# basic_circuits.py: Large depth/width qRAM circuits. 
+#                                                                                  
+# © 2018 Olivia Di Matteo (odimatte@uwaterloo.ca)                                  
+#                                                                                  
+# This file is part of the project FT_qRAM_Circuits.                                      
+# Licensed under MIT License. 
+
 from circuit import *
 
 class LargeWidthSmallDepth(qRAMCircuit):
