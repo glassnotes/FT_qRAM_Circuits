@@ -44,19 +44,19 @@ class Hybrid_Tier1Parallel(qRAMCircuit):
         self.params["name"] = "Hybrid_Tier1Parallel"
 
         if k < q:
-            self.params["n_qubits"] = (k+1)*pow(2,k) + n - k + 1 + max(n-k, pow(2,k)*(k-1)) + 1
-            self.params["depth"] = 2 * ( k + depth(k) + pow(2,q)*depth(n-k+1) ) + 1
-            self.params["t_count"] = 2 * ( pow(2,k)*t_c(k) + pow(2,q)*t_c(n-k+1) )
-            self.params["t_depth"] = 2 * ( t_d(k) + pow(2,q)*t_d(n-k+1) )
-            self.params["h_count"] = 2 * ( pow(2,k)*h_c(k) + pow(2,q)*h_c(n-k+1) )
-            self.params["cnot_count"] = 2 * ( k*(pow(2,k)-1) + pow(2,k)*cnot_c(k) + pow(2,q)*cnot_c(n-k+1) ) + 1
+            self.params["n_qubits"] = (k+1)*pow(2,k) + n - k + 1 + max(n-k, pow(2,k)*(k-1))
+            self.params["depth"] = 2*(k + depth(k)) + pow(2,q)*depth(n-k+1)
+            self.params["t_count"] = 2*pow(2,k)*t_c(k) + pow(2,q)*t_c(n-k+1)
+            self.params["t_depth"] = 2*t_d(k) + pow(2,q)*t_d(n-k+1)
+            self.params["h_count"] = 2*pow(2,k)*h_c(k) + pow(2,q)*h_c(n-k+1)
+            self.params["cnot_count"] = 2*(k*(pow(2,k)-1) + pow(2,k)*cnot_c(k)) + pow(2,q)*cnot_c(n-k+1)
         else: # Worst case: 2^q k-controlled, 2^q (n-k+1)-controlled (no common substrings on the bits)
-            self.params["n_qubits"] = (k+1)*pow(2,q) + n - k + 1 + max(n-k, pow(2,q)*(k-1)) + 1
-            self.params["depth"] = 2 * ( q + depth(k) + pow(2,q)*depth(n-k+1) ) + 1
-            self.params["t_count"] = 2 * ( pow(2,q)*t_c(k) + pow(2,q)*t_c(n-k+1) )
-            self.params["t_depth"] = 2 * ( t_d(k) + pow(2,q)*t_d(n-k+1) )
-            self.params["h_count"] = 2 * ( pow(2,q)*h_c(k) + pow(2,q)*h_c(n-k+1) )
-            self.params["cnot_count"] = 2 * ( k*(pow(2,q)-1) + pow(2,q)*cnot_c(k) + pow(2,q)*cnot_c(n-k+1) ) + 1
+            self.params["n_qubits"] = (k+1)*pow(2,q) + n - k + 1 + max(n-k, pow(2,q)*(k-1))
+            self.params["depth"] = 2*(q + depth(k)) + pow(2,q)*depth(n-k+1)
+            self.params["t_count"] = 2*pow(2,q)*t_c(k) + pow(2,q)*t_c(n-k+1)
+            self.params["t_depth"] = 2*(t_d(k)) + pow(2,q)*t_d(n-k+1)
+            self.params["h_count"] = 2*pow(2,q)*h_c(k) + pow(2,q)*h_c(n-k+1)
+            self.params["cnot_count"] = 2*( k*(pow(2,q)-1) + pow(2,q)*cnot_c(k)) + pow(2,q)*cnot_c(n-k+1)
 
         self.params["cliffords"] = self.params["h_count"] + self.params["cnot_count"]
 
@@ -72,20 +72,24 @@ class Hybrid_Tier2Parallel(qRAMCircuit):
             # In the worst case, one of the 2^k outputs must do 2^(q-1) + 1 of the n-k+1-controlled gates,
             # and all the remaining ones must do 1; assume then that one of the registers must perform
             # enough CNOTs to copy down to 2^(q-1) + 1 registers.
+            # Address fanout of the bottom tier can be done in tandem with MPMCTs of the top tier;
+            # whichever depth is less is the one we go with, so lots of max calculations here.
+            # See p.157 of nb.
             self.params["n_qubits"] = k + (n-k+2)*pow(2,q) + max(k-1, pow(2,q)*(n-k)) + 1
-            self.params["depth"] = 2 * (pow(2,k)*depth(k) + q + depth(n-k+1) + q) + 1
-            self.params["t_count"] = 2 * ( pow(2,k)*t_c(k) + pow(2,q)*t_c(n-k+1) )
-            self.params["t_depth"] = 2 * ( pow(2,k)*t_d(k) + t_d(n-k+1) )
-            self.params["h_count"] = 2 * ( pow(2,k)*h_c(k) + pow(2,q)*h_c(n-k+1) )
-            # CNOTs for first 2^q k + CNOTs to copy outputs + CNOTs to copy (n-k) in parallel + CNOTs for 2^q (n-k+1) controlled + CNOTs to merge outputs
-            self.params["cnot_count"] = 2 * ( pow(2,k)*cnot_c(k) + pow(2,q-1) + (n-k)*(pow(2,q)-1) + pow(2,q)*cnot_c(n-k+1) + pow(2,q) - 1) + 1
+            # Top tier + fanout + bottom tier in parallel + max(parity compute/uncompute, fanout + top tier)
+            self.params["depth"] = 2*pow(2,k)*depth(k) + q + depth(n-k+1) + max(2*q + 2, q + pow(2,k)*depth(k))
+            self.params["t_count"] = 2*pow(2,k)*t_c(k) + pow(2,q)*t_c(n-k+1)
+            self.params["t_depth"] = 2*pow(2,k)*t_d(k) + t_d(n-k+1)
+            self.params["h_count"] = 2*pow(2,k)*h_c(k) + pow(2,q)*h_c(n-k+1)
+            # CNOTs for first 2^q k + CNOTs to copy outputs + CNOTs to copy (n-k) in parallel + CNOTs for 2^q (n-k+1) controlled + parity calculation
+            self.params["cnot_count"] = 2*(pow(2,k)*cnot_c(k) + pow(2,q-1) + (n-k)*(pow(2,q)-1)) + pow(2,q)*cnot_c(n-k+1) + 2*(pow(2,q)-1) + 2
         else: # Worst case: 2^q k-controlled, 2^q (n-k+1)-controlled (no common substrings on the bits)
             self.params["n_qubits"] = k + (n-k+2)*pow(2,q) + max(k-1, pow(2,q)*(n-k)) + 1
-            self.params["depth"] = 2 * (pow(2,q)*depth(k) + q + depth(n-k+1) + q) + 1
-            self.params["t_count"] = 2 * ( pow(2,q)*t_c(k) + pow(2,q)*t_c(n-k+1) )
-            self.params["t_depth"] = 2 * ( pow(2,q)*t_d(k) + t_d(n-k+1) )
-            self.params["h_count"] = 2 * ( pow(2,q)*h_c(k) + pow(2,q)*h_c(n-k+1) )
-            self.params["cnot_count"] = 2 * (  pow(2,q)*cnot_c(k) + pow(2,q-1) + (n-k)*(pow(2,q)-1) + pow(2,q)*cnot_c(n-k+1) + pow(2,q) - 1) + 1
+            self.params["depth"] = 2*pow(2,q)*depth(k) + q + depth(n-k+1) + max(2*q + 2, q + pow(2,q)*depth(k))
+            self.params["t_count"] = 2*pow(2,q)*t_c(k) + pow(2,q)*t_c(n-k+1)
+            self.params["t_depth"] = 2*pow(2,q)*t_d(k) + t_d(n-k+1)
+            self.params["h_count"] = 2*pow(2,q)*h_c(k) + pow(2,q)*h_c(n-k+1)
+            self.params["cnot_count"] = 2*(pow(2,q)*cnot_c(k) + pow(2,q-1) + (n-k)*(pow(2,q)-1)) + pow(2,q)*cnot_c(n-k+1) + 2*(pow(2,q)-1) + 2
 
         self.params["cliffords"] = self.params["h_count"] + self.params["cnot_count"]
 
