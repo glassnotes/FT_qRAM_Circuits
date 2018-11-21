@@ -19,7 +19,7 @@ class Hybrid(qRAMCircuit):
         self.params["name"] = "Hybrid"
 
         if k < q: # Worst case: 2^k k-controlled, 2^q (n-k+1)-controlled
-            self.params["n_qubits"] = n + pow(2,k) + 1 + max(k-1, n-k) +
+            self.params["n_qubits"] = n + pow(2,k) + 1 + max(k-1, n-k)
             self.params["depth"] = 2*pow(2,k)*depth(k) + pow(2,q)*depth(n-k+1)
             self.params["t_count"] = 2*pow(2,k)*t_c(k) + pow(2,q)*t_c(n-k+1)
             self.params["t_depth"] = 2*pow(2,k)*t_d(k) + pow(2,q)*t_d(n-k+1)
