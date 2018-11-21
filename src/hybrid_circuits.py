@@ -104,17 +104,17 @@ class Hybrid_Parallel(qRAMCircuit):
 
         if k < q: # Similar worst case as above; one of the 2^k top-tier outputs must be copied down to 2^(q-1) + 1 fresh outputs
             self.params["n_qubits"] = k*pow(2,k) + (n-k+2)*pow(2,q) + max(pow(2,k)*(k-1), pow(2,q)*(n-k)) + 1
-            self.params["depth"] = 2 * (q + depth(k) + q + depth(n-k+1) + q) + 1
-            self.params["t_count"] = 2 * ( pow(2,k)*t_c(k) + pow(2,q)*t_c(n-k+1) )
-            self.params["t_depth"] = 2 * ( t_d(k) + t_d(n-k+1) )
-            self.params["h_count"] = 2 * ( pow(2,k)*h_c(k) + pow(2,q)*h_c(n-k+1) )
-            self.params["cnot_count"] = 2 * ( k*(pow(2,k)-1) + pow(2,k)*cnot_c(k) + pow(2,q-1) + (n-k)*(pow(2,q)-1) + pow(2,q)*cnot_c(n-k+1) ) + 1
+            self.params["depth"] = k + depth(k) + q + depth(n-k+1) + max(2*q+2, q + depth(k) + k)
+            self.params["t_count"] = 2*pow(2,k)*t_c(k) + pow(2,q)*t_c(n-k+1)
+            self.params["t_depth"] = 2*t_d(k) + t_d(n-k+1)
+            self.params["h_count"] = 2*pow(2,k)*h_c(k) + pow(2,q)*h_c(n-k+1)
+            self.params["cnot_count"] = 2 * ( k*(pow(2,k)-1) + pow(2,k)*cnot_c(k) + pow(2,q-1) + (n-k)*(pow(2,q)-1)) + pow(2,q)*cnot_c(n-k+1) + 2*(pow(2,q)-1) + 2 
         else: 
             self.params["n_qubits"] = k*pow(2,q) + (n-k+2)*pow(2,q) + max(pow(2,q)*(k-1), pow(2,q)*(n-k)) + 1
-            self.params["depth"] = 2 * (q + depth(k) + q + depth(n-k+1) + q) + 1
-            self.params["t_count"] = 2 * ( pow(2,q)*t_c(k) + pow(2,q)*t_c(n-k+1) )
-            self.params["t_depth"] = 2 * ( t_d(k) + t_d(n-k+1) )
-            self.params["h_count"] = 2 * ( pow(2,q)*h_c(k) + pow(2,q)*h_c(n-k+1) )
-            self.params["cnot_count"] = 2 * ( k*(pow(2,q)-1) + pow(2,q)*cnot_c(k) + pow(2,q-1) + (n-k)*(pow(2,q)-1) + pow(2,q)*cnot_c(n-k+1) ) + 1
+            self.params["depth"] = q + depth(k) + q + depth(n-k+1) + max(2*q+2, q + depth(k) + q)
+            self.params["t_count"] = 2*pow(2,q)*t_c(k) + pow(2,q)*t_c(n-k+1)
+            self.params["t_depth"] = 2*t_d(k) + t_d(n-k+1)
+            self.params["h_count"] = 2*pow(2,q)*h_c(k) + pow(2,q)*h_c(n-k+1)
+            self.params["cnot_count"] = 2*(k*(pow(2,q)-1) + pow(2,q)*cnot_c(k) + pow(2,q-1) + (n-k)*(pow(2,q)-1)) + pow(2,q)*cnot_c(n-k+1) + 2*(pow(2,q)-1) + 2 
 
         self.params["cliffords"] = self.params["h_count"] + self.params["cnot_count"]
