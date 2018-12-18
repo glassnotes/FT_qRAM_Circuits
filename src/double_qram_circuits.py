@@ -8,7 +8,6 @@
 # Licensed under MIT License. 
 
 from circuit import *
-from surface_code import *
 
 # Double QRAM circuits
 # Note: In the worst case, the layers of T-depth from the two individual QRAMs don't line up,
