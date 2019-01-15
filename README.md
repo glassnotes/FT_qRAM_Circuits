@@ -17,7 +17,7 @@ To run the analysis notebooks:
 
 ## Usage
 
-Within each class are formulae for the computation of relevant resources such as number of logical qubits, T-gates, Clifford gates, etc. All circuits inherit from a parent class `qRAMCircuit`, found in `src/circuit.py`.
+Within each class are formulae for the computation of relevant resources such as number of logical qubits, T-gates, Clifford gates, etc. All circuits inherit from a parent class `qRAMCircuit`, which itself inherits from a more general Circuit base class (both found in `src/circuit.py`).
 
 The file `src/surface_code.py` contains a surface code class that eats circuits and produces the resource estimates. Currently only defect-based estimates are implemented, with lattice surgery methods to be implemented at some point in the future. 
 
@@ -38,6 +38,6 @@ circ = LargeWidthSmallDepth(35, 33)
 defect_est = surf_code.defect_compute_resources(circ)
 ```
 
-The script `src/generate_paper_data.py` will produce all the data as it appears in our paper. The relevant data is also included in `data/` and the analysis notebooks are in `analysis/`.
+The script `scripts/generate_paper_data.py` will produce all the data as it appears in our paper. The relevant data is also included in `data/` and the analysis notebooks are in `analysis/`.
 
-Contact odimatte AT uwaterloo DOT ca for questions/comments or if you find any bugs.
+Contact odimatteo AT triumf DOT ca for questions/comments, or create an issue if you find any bugs.
