@@ -1,6 +1,6 @@
 # Fault-tolerant resource estimation of qRAM circuits.
 
-This package contains Python classes for each type of circuit (and various parallelized versions) we discuss in [insert arXiv citation here]: 
+This package contains Python classes for each type of circuit (and various parallelized versions) we discuss in [our arXiv preprint](http://arxiv.org/abs/1902.01329).
 *  Bucket brigade circuits (`src/bucket_brigade_circuits.py`)
 *  Basic circuits (`src/basic_circuits.py`)
 *  Hybrid circuits (`src/hybrid_circuits.py`)
