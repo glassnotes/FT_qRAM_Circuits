@@ -40,8 +40,8 @@ class SurfaceCode():
         resources = { # The set of values we will compute
                 "distill_reqd" : True,
                 "distill_distances" : [],
-                "distill_factories" : 0,
-                "distill_sim_states" : 0,
+                "distill_factories" : 0
+,                "distill_sim_states" : 0,
                 "distill_cycles_per_state" : 0,
                 "distill_total_cycles" : 0,
                 "distill_logical_q_per_factory" : 0,
@@ -130,34 +130,40 @@ class SurfaceCode():
         # -----------------------------
         # For the Clifford surface code
         # -----------------------------
-        p_cliff = 1. / circuit.params["cliffords"]
-        d_cliff = 1
-        while pow(self.params["p_in"] / 0.0125, (d_cliff + 1.)/2) > p_cliff:
-            d_cliff += 1
-        resources["clifford_distance"] = d_cliff
-        resources["clifford_phys_q"] = circuit.params["n_qubits"] * np.ceil(2.5 * 1.25 * (d_cliff ** 2))
+        if circuit.params["cliffords"] > 0:
+            p_cliff = 1. / circuit.params["cliffords"]
+            d_cliff = 1
+            while pow(self.params["p_in"] / 0.0125, (d_cliff + 1.)/2) > p_cliff:
+                d_cliff += 1
+            resources["clifford_distance"] = d_cliff
+            resources["clifford_phys_q"] = circuit.params["n_qubits"] * np.ceil(2.5 * 1.25 * (d_cliff ** 2))
 
-        # Compute the number of cycles required to implement the Clifford portion
-        # CNOTs take 2 cycles, Hadamards d cycles
+            # Compute the number of cycles required to implement the Clifford portion
+            # CNOTs take 2 cycles, Hadamards d cycles
 
-        # First compute the weighted average number of cycles based on the number of
-        # CNOTs and hadamards per layer
-        f_cnot = circuit.params["cnot_count"] * 1./ circuit.params["cliffords"] # Fraction of CNOTs
-        f_h = circuit.params["h_count"] * 1./ circuit.params["cliffords"] # Fraction of Hadamards
-        cliffords_per_depth = (1. * circuit.params["cliffords"]) / (circuit.params["n_qubits"] * circuit.params["depth"]) # Cliffords per qubit per layer
+            # First compute the weighted average number of cycles based on the number of
+            # CNOTs and hadamards per layer
+            f_cnot = circuit.params["cnot_count"] * 1./ circuit.params["cliffords"] # Fraction of CNOTs
+            f_h = circuit.params["h_count"] * 1./ circuit.params["cliffords"] # Fraction of Hadamards
+            cliffords_per_depth = (1. * circuit.params["cliffords"]) / (circuit.params["n_qubits"] * circuit.params["depth"]) # Cliffords per qubit per layer
 
-        # Average cycles per layer of depth
-        avg_cycles = cliffords_per_depth * (f_cnot * 2 + f_h * d_cliff)
-        resources["clifford_total_avg_cycles"] = avg_cycles * circuit.params["depth"]
-        resources["clifford_time"] = self.params["t_sc"] * resources["clifford_total_avg_cycles"]
+            # Average cycles per layer of depth
+            avg_cycles = cliffords_per_depth * (f_cnot * 2 + f_h * d_cliff)
+            resources["clifford_total_avg_cycles"] = avg_cycles * circuit.params["depth"]
+            resources["clifford_time"] = self.params["t_sc"] * resources["clifford_total_avg_cycles"]
 
         # Now compute the total costs
         total_logical_qubits = circuit.params["n_qubits"] + resources["distill_logical_q"]
-        total_cycles = resources["distill_total_cycles"] +resources["clifford_total_avg_cycles"]
+        total_cycles = resources["distill_total_cycles"] + resources["clifford_total_avg_cycles"]
 
-        resources["total_cost"] = np.log2(total_logical_qubits * total_cycles)
-        resources["total_time"] = max(resources["clifford_time"], resources["distill_time"])
-        resources["total_phys_q"] = resources["distill_phys_q"] + resources["clifford_phys_q"]
+        if total_cycles > 0: # No distillation, and no Clifford counts provided
+            resources["total_cost"] = np.log2(total_logical_qubits * total_cycles)
+            resources["total_time"] = max(resources["clifford_time"], resources["distill_time"])
+            resources["total_phys_q"] = resources["distill_phys_q"] + resources["clifford_phys_q"]
+        else:
+            resources["total_cost"] = 0
+            resources["total_time"] = 0
+            resources["total_phys_q"] = 0
 
         # Return EVERYTHING
         return {"mode" : "defect", **resources, **circuit.params, **self.params}
