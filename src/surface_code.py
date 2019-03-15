@@ -100,13 +100,13 @@ class SurfaceCode():
 
             # The `bottom' layer of the distillation circuit has the largest footprint
             # i.e. number of physical qubits
-            bottom_footprint = resources["distill_logical_q_per_factory"] * np.ceil(2.5 * 1.25 * pow(d[-1], 2))
+            bottom_footprint = resources["distill_logical_q_per_factory"] * np.ceil(2.5 * 1.25 * pow(2*d[-1], 2))
 
             # Physical qubits for the middle footprint, if applicable
             # The number of magic states that we can produce simultaneous is the ratio of
             # the layers; if there is only 1 layer, we can only produce 1 state at a time.
             if len(d) > 1:
-                middle_footprint = (resources["distill_logical_q_per_factory"]/ 15.) * np.ceil(2.5 * 1.25 * pow(d[-2], 2))
+                middle_footprint = (resources["distill_logical_q_per_factory"]/ 15.) * np.ceil(2.5 * 1.25 * pow(2*d[-2], 2))
                 resources["distill_sim_states"] = np.floor(bottom_footprint / middle_footprint)
             else:
                 resources["distill_sim_states"] = 1
@@ -139,7 +139,7 @@ class SurfaceCode():
             while pow(self.params["p_in"] / 0.0125, (d_cliff + 1.)/2) > p_cliff:
                 d_cliff += 1
             resources["clifford_distance"] = d_cliff
-            resources["clifford_phys_q"] = circuit.params["n_qubits"] * np.ceil(2.5 * 1.25 * (d_cliff ** 2))
+            resources["clifford_phys_q"] = circuit.params["n_qubits"] * np.ceil(2.5 * 1.25 * pow(2*d_cliff, 2))
 
             # Compute the number of cycles required to implement the Clifford portion
             # CNOTs take 2 cycles, Hadamards d cycles
