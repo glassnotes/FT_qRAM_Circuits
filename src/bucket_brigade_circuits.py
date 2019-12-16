@@ -20,11 +20,11 @@ class BucketBrigade(qRAMCircuit):
         self.params["name"] = "BucketBrigade"
 
         self.params["n_qubits"] = n + pow(2,n+1) + 5
-        self.params["depth"] = 45*pow(2,n) + 2*n - 60
+        self.params["depth"] = 21*pow(2,n) + 2*n - 26
         self.params["t_count"] = 21*pow(2,n) - 28
         self.params["t_depth"] = 3*pow(2,n) - 4
-        self.params["h_count"] = 4*pow(2,n) - 6
-        self.params["cnot_count"] = 50*pow(2,n) - 66
+        self.params["h_count"] = 0
+        self.params["cnot_count"] = 50*pow(2,n) - 64
         self.params["cliffords"] = self.params["h_count"] + self.params["cnot_count"]
 
 
@@ -50,9 +50,9 @@ class BucketBrigadeParallel(qRAMCircuit):
         self.params["name"] = "BucketBrigadeParallel"
         
         self.params["n_qubits"] = 8*pow(2,n) 
-        self.params["depth"] = pow(n, 2) + 35*n - 15 
+        self.params["depth"] = 16*n - 5 
         self.params["t_count"] = 21*pow(2,n) - 28 
         self.params["t_depth"] = 2*n - 1
-        self.params["h_count"] = 6*pow(2,n) - 8
-        self.params["cnot_count"] = 60*pow(2,n) - 2*n - 74
+        self.params["h_count"] = 0
+        self.params["cnot_count"] = 54*pow(2,n) - 2*n - 66
         self.params["cliffords"] = self.params["h_count"] + self.params["cnot_count"]
